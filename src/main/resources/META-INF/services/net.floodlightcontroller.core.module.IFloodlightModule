@@ -30,6 +30,5 @@ net.floodlightcontroller.statistics.StatisticsCollector
 net.floodlightcontroller.routing.RoutingManager
 net.floodlightcontroller.cpanalyzer.CPAnalyzer
 net.floodlightcontroller.mactracker.MACTracker
-net.floodlightcontroller.assignment.LearningSwitchExample
 net.floodlightcontroller.assignment.topology.DiscoverNetworkTopology
-net.floodlightcontroller.assignment.topology.Forwarding2
+net.floodlightcontroller.assignment.forwarding.Forwarding2
