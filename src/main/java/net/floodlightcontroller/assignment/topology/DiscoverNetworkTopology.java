@@ -20,26 +20,25 @@ import java.util.*;
 
 /**
  * <h1> Topology Discovery</h1>
- *
+ * <p>
  * This class is for;
- *  - Get link information and switch information. (Switch IDs and ports)
- *  - Get Host information. (Which host connected which switch and which port.)
- *
+ * - Get link information and switch information. (Switch IDs and ports)
+ * - Get Host information. (Which host connected which switch and which port.)
+ * <p>
  * ------ Get Link  and Switch Information -----
- *  ILinkDiscoveryListener interface for linkDiscoveryUpdate method and
- *  this method gives us the link information between two switches
- *
+ * ILinkDiscoveryListener interface for linkDiscoveryUpdate method and
+ * this method gives us the link information between two switches
+ * <p>
  * ----- Get Switch Information -----------
- *  IDeviceListener interface
- *  IDeviceListener interface deviceAdded method for getting host information
- *
- * */
+ * IDeviceListener interface
+ * IDeviceListener interface deviceAdded method for getting host information
+ */
 public class DiscoverNetworkTopology implements IFloodlightModule, ILinkDiscoveryListener, IDeviceListener {
 
     /**
-    * deviceSet keeps information about Switches (Link Info) and Hosts*
+     * deviceSet keeps information about Switches (Link Info) and Hosts*
      * it is static variable so information inside it is gotten from other classes
-    **/
+     **/
     public static ArrayList<Device> deviceSet = new ArrayList<Device>();
     protected IDeviceService deviceManagerService;
     protected ILinkDiscoveryService linkService;
@@ -62,7 +61,8 @@ public class DiscoverNetworkTopology implements IFloodlightModule, ILinkDiscover
         l.add(IDeviceService.class);
         l.add(ITopologyService.class);
         l.add(ILinkDiscoveryService.class);
-        return l;    }
+        return l;
+    }
 
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
@@ -80,16 +80,15 @@ public class DiscoverNetworkTopology implements IFloodlightModule, ILinkDiscover
 
     /**
      * This method gets links between switches. One link has four information.
-     *  1-Source switch DatapathId
-     *  2-Source switch port
-     *  3-Destination switch DatapathId
-     *  4-Destination switch port
-     * */
+     * 1-Source switch DatapathId
+     * 2-Source switch port
+     * 3-Destination switch DatapathId
+     * 4-Destination switch port
+     */
     @Override
     public void linkDiscoveryUpdate(List<LDUpdate> updateList) {
 
         Map a = topologyService.getAllLinks();
-
         for (LDUpdate u : updateList) {
             if (u.getOperation() == UpdateOperation.SWITCH_UPDATED) {
                 if (a.size() != 0) {
@@ -105,29 +104,27 @@ public class DiscoverNetworkTopology implements IFloodlightModule, ILinkDiscover
 
                             if (link.getSrc().toString().equals(swDataPathId.toString())) {
                                 // Cift Yonlu olarak linkler elimizde
-                                Boolean hasLink = true;
-                                Device switchDevice =  new Device(link.getSrc(), link.getSrcPort(), link.getDst(), link.getDstPort(), "Switch");
+                                //System.out.println(link.getSrc() + "----------------" + link.getDst());
+                                Boolean hasLink = false;
+                                Device switchDevice = new Device(link.getSrc(), link.getSrcPort(), link.getDst(), link.getDstPort(), "Switch");
 
 
                                 for (Device device :
                                         deviceSet) {
                                     if (
                                             device.getSrcMACAddress().toString().equals(switchDevice.getSrcMACAddress().toString()) &&
-                                                    device.getDestMACAddress().toString().equals(switchDevice.getDestMACAddress().toString())&&
+                                                    device.getDestMACAddress().toString().equals(switchDevice.getDestMACAddress().toString()) &&
                                                     device.getSrcPort().toString().equals(switchDevice.getSrcPort().toString())
                                             ) {
                                         hasLink = true;
                                         break;
-                                    }
-                                    else {
+                                    } else {
                                         hasLink = false;
 
                                     }
                                 }
-                                if (!hasLink) {
+                                if (!hasLink)
                                     deviceSet.add(switchDevice);
-                                    System.out.println(switchDevice.toString());
-                                }
                             }
 
                         }
@@ -141,21 +138,20 @@ public class DiscoverNetworkTopology implements IFloodlightModule, ILinkDiscover
 
     /**
      * This methods gives us host information.
-     *  Host MAC ADRESS and connected switch and port
-     * */
+     * Host MAC ADRESS and connected switch and port
+     */
     @Override
     public void deviceAdded(IDevice device) {
 
         String macAddressString = device.getMACAddressString();
         DatapathId macAddress = DatapathId.of(device.getMACAddress());
-        if (macAddressString.startsWith("00:00:"))
-            if (device.getAttachmentPoints().length == 1){
-
+        if (macAddressString.startsWith("00:00:") || macAddressString.startsWith("10:00:"))
+            if (device.getAttachmentPoints().length == 1) {
                 SwitchPort switchPort = device.getAttachmentPoints()[0];
-                Device hostDevice = new Device(macAddress,  switchPort.getPortId(), switchPort.getNodeId(), null, "Host");
+                Device hostDevice = new Device(macAddress, switchPort.getPortId(), switchPort.getNodeId(), null, "Host");
                 deviceSet.add(hostDevice);
-                System.out.println(hostDevice.toString());
             }
+
 
     }
 
@@ -186,7 +182,7 @@ public class DiscoverNetworkTopology implements IFloodlightModule, ILinkDiscover
 
     @Override
     public String getName() {
-            return DiscoverNetworkTopology.class.getSimpleName();
+        return DiscoverNetworkTopology.class.getSimpleName();
     }
 
     @Override

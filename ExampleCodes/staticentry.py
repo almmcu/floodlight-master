@@ -1,4 +1,6 @@
-# RUN from terminal: python staticentry.py 
+# RUN from terminal: python staticentry2.py
+#Rules for ff1.py topology
+
 import httplib
 import json
  
