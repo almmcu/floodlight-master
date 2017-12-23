@@ -158,6 +158,19 @@ public class FastFailoverForwarding implements IFloodlightModule, IOFMessageList
                                     e.printStackTrace();
                                 }
 
+                                //************************************************************
+                                // Geri Donus icin
+
+                                jsonObject = flowAdd(dstMac, srcMac, shortestPath.getPathTable().get("MainPath").get(i),
+                                        inport.toString(),
+                                        "output="+outport.toString());
+                                try {
+                                    post.postFlow(jsonObject);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                //************************************************************
+
 
                             }// end for
 
